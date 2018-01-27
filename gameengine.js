@@ -65,6 +65,7 @@ GameEngine.prototype.startInput = function () {
         if (String.fromCharCode(e.which) === ' ') that.space = true;
         if (e.keyCode == 39 || e.keyCode == 68) that.right = true;
         if (e.keyCode == 37 || e.keyCode == 65) that.left = true;
+        if (e.keyCode == 16 || e.keyCode == 90 || e.keyCode == 88 || e.keyCode == 70) that.action = true;
         e.preventDefault();
     }, false);
 
@@ -79,6 +80,8 @@ GameEngine.prototype.startInput = function () {
           console.log("left");
           that.left = false;
         }
+
+        if (e.keyCode == 16 || e.keyCode == 90 || e.keyCode == 88 || e.keyCode == 70) that.action = false;
         console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
 

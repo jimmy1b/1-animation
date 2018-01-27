@@ -116,7 +116,7 @@ function Knight(game) {
     this.idle = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 2, 36, 32, 0.10, 4, true, false);
     this.run = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 77, 42, 35, 0.02, 6, true, false);
     this.jump = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 2333, 38, 34, 0.20, 5, false, false);
-    this.swing = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 186, 56, 35, 0.02, 5, false, false);
+    this.swing = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 186, 56, 35, 0.04, 5, false, false);
     this.jumping = false;
     this.starting = true;
     this.swinging = false;
@@ -133,6 +133,7 @@ Knight.prototype.constructor = Knight;
 Knight.prototype.update = function () {
     if (!this.starting) {
         if (this.game.space) this.jumping = true;
+        if (this.game.action) this.swinging = true;
         if (this.game.left) { 
             this.left = true;
         } else {
@@ -142,6 +143,13 @@ Knight.prototype.update = function () {
             this.right = true;
         } else {
             this.right = false;
+        }
+
+        if (this.swinging) {
+            if (this.swing.isDone()) {
+                this.swing.elapsedTime = 0;
+                this.swinging = false;
+            }
         }
 
         if (this.jumping) {
@@ -160,10 +168,10 @@ Knight.prototype.update = function () {
             this.y = this.ground - height;
         }
         if (this.left) {
-            this.x = this.x - 2;
+            this.x = this.x - 4;
         }
         if (this.right) {
-            this.x = this.x + 2;
+            this.x = this.x + 4;
         }
     } else {
         if (this.start.isDone()) {
@@ -188,7 +196,10 @@ Knight.prototype.draw = function(ctx) {
     if (this.starting) {
         this.start.drawFrame(this.game.clockTick, ctx, this.x - 35, this.y - 15, 2);
     } else {
-        if (this.jumping) {
+        if (this.swinging) {
+            this.swing.drawFrame(this.game.clockTick, ctx, this.x, this.y, 2);
+        }
+        else if (this.jumping) {
             this.jump.drawFrame(this.game.clockTick, ctx, this.x - 10, this.y - 10, 2);
         }
         else if (this.left) {
@@ -205,24 +216,39 @@ Knight.prototype.draw = function(ctx) {
 }
 
 
-function rat(game) {
-
+function Rat(game) {
+    this.start = new Animation(ASSET_MANAGER.getAsset("./img/ratt.png"), 1, 43, 29, 39, 0.3, 4, true, false);
+    this.t = 1;
+    this.right = true;
+    this.radius = 100;
+    this.ground = 150;
+    Entity.call(this, game, -50, 300);
 }
 
-rat.prototype = new Entity();
-rat.prototype.constructor = rat;
+Rat.prototype = new Entity();
+Rat.prototype.constructor = Rat;
 
-rat.prototype.update = function () {
+Rat.prototype.update = function () {
+    if (this.x < 100) {
+        right = true;
+    } else if (this.x > 600) {
+        right = false;
+    }
 
+    if(right) {
+        this.x = this.x + 3;
+    } else {
+        this.x = this.x - 3;
+    }
+
+    this.y = Math.sin(this.t / 5) * 20 + 100;
+    this.t++;
+    Entity.prototype.update.call(this);
 }
 
-rat.prototype.draw = function(ctx) {
-    if (this.jumping) {
-        this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x + 17, this.y - 34);
-    }
-    else {
-        this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-    }
+Rat.prototype.draw = function(ctx) {
+    
+    this.start.drawFrame(this.game.clockTick, ctx, this.x, this.y, 2);
     Entity.prototype.draw.call(this);
 }
 
@@ -241,14 +267,24 @@ ASSET_MANAGER.downloadAll(function () {
 
     var gameEngine = new GameEngine();
     var bg = new Background(gameEngine);
-    var unicorn = new Unicorn(gameEngine);
+    //var unicorn = new Unicorn(gameEngine);
 
     var knight = new Knight(gameEngine);
+    var r1 = new Rat(gameEngine);
+    // var r2 = new Rat(gameEngine);
+    // var r3 = new Rat(gameEngine);
+    // var r4 = new Rat(gameEngine);
+    // var r5 = new Rat(gameEngine);
 
     gameEngine.addEntity(bg);
-    gameEngine.addEntity(unicorn);
+    //gameEngine.addEntity(unicorn);
 
     gameEngine.addEntity(knight);
+    gameEngine.addEntity(r1);
+    // gameEngine.addEntity(r2);
+    // gameEngine.addEntity(r3);
+    // gameEngine.addEntity(r4);
+    // gameEngine.addEntity(r5);
  
     gameEngine.init(ctx);
     gameEngine.start();
