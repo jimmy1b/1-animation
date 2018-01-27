@@ -114,11 +114,14 @@ Unicorn.prototype.draw = function (ctx) {
 function Knight(game) {
     this.start = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 393, 62, 51, 0.10, 9, false, false);
     this.idle = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 2, 36, 32, 0.10, 4, true, false);
-    this.run = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 77, 42, 35, 0.02, 6, false, false);
+    this.run = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 77, 42, 35, 0.02, 6, true, false);
     this.jump = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 2333, 38, 34, 0.20, 5, false, false);
     this.swing = new Animation(ASSET_MANAGER.getAsset("./img/knightt.png"), 1, 186, 56, 35, 0.02, 5, false, false);
     this.jumping = false;
     this.starting = true;
+    this.swinging = false;
+    this.left = false;
+    this.right = false;
     this.radius = 100;
     this.ground = 440;
     Entity.call(this, game, 0, 440);
@@ -130,6 +133,17 @@ Knight.prototype.constructor = Knight;
 Knight.prototype.update = function () {
     if (!this.starting) {
         if (this.game.space) this.jumping = true;
+        if (this.game.left) { 
+            this.left = true;
+        } else {
+            this.left = false;
+        } 
+        if (this.game.right) {
+            this.right = true;
+        } else {
+            this.right = false;
+        }
+
         if (this.jumping) {
             if (this.jump.isDone()) {
                 this.jump.elapsedTime = 0;
@@ -144,6 +158,12 @@ Knight.prototype.update = function () {
             //var height = jumpDistance * 2 * totalHeight;
             var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
             this.y = this.ground - height;
+        }
+        if (this.left) {
+            this.x = this.x - 2;
+        }
+        if (this.right) {
+            this.x = this.x + 2;
         }
     } else {
         if (this.start.isDone()) {
@@ -167,12 +187,19 @@ Knight.prototype.update = function () {
 Knight.prototype.draw = function(ctx) {
     if (this.starting) {
         this.start.drawFrame(this.game.clockTick, ctx, this.x - 35, this.y - 15, 2);
-    } 
-    else if (this.jumping) {
-        this.jump.drawFrame(this.game.clockTick, ctx, this.x - 10, this.y - 10, 2);
-    }
-    else {
-        this.idle.drawFrame(this.game.clockTick, ctx, this.x, this.y, 2);
+    } else {
+        if (this.jumping) {
+            this.jump.drawFrame(this.game.clockTick, ctx, this.x - 10, this.y - 10, 2);
+        }
+        else if (this.left) {
+            this.run.drawFrame(this.game.clockTick, ctx, this.x, this.y, 2);
+        }
+        else if (this.right) {
+            this.run.drawFrame(this.game.clockTick, ctx, this.x, this.y, 2);
+        }
+        else {
+            this.idle.drawFrame(this.game.clockTick, ctx, this.x, this.y, 2);
+        }
     }
     Entity.prototype.draw.call(this);
 }

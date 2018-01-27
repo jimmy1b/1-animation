@@ -63,8 +63,23 @@ GameEngine.prototype.startInput = function () {
 
     this.ctx.canvas.addEventListener("keydown", function (e) {
         if (String.fromCharCode(e.which) === ' ') that.space = true;
-//        console.log(e);
+        if (e.keyCode == 39 || e.keyCode == 68) that.right = true;
+        if (e.keyCode == 37 || e.keyCode == 65) that.left = true;
         e.preventDefault();
+    }, false);
+
+    this.ctx.canvas.addEventListener("keyup", function (e) {
+        console.log(e);
+
+        if (e.keyCode == 39 || e.keyCode == 68) {
+          console.log("right");
+          that.right = false;
+        }
+        if (e.keyCode == 37 || e.keyCode == 65) {
+          console.log("left");
+          that.left = false;
+        }
+        console.log("Key Up Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
 
     console.log('Input started');
