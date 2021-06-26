@@ -3,7 +3,7 @@ assignment 1
 
 https://jimmy1b.github.io/1-animation/
 
-Animation test using sprites from shovel knight
+Animation test, not my sprites
 
 -move with left and right
 
